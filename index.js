@@ -7,7 +7,7 @@ var _ = require('lodash'),
   mongoDb = require('mongodb').MongoClient;
 
 function MongoDB(connectionString) {
-  if (!connectionString) throw new Error('Db.MongoDB requires a connection path');  
+  if (!connectionString) throw new Error('Db.MongoDB requires a connection path');
   this.connectionString = connectionString;
 }
 
@@ -47,11 +47,11 @@ _.extend(MongoDB.prototype, Db.prototype, {
     options = options || {};
     var self = this;
 
-    var collectionName;    
+    var collectionName;
     if (options.mongo_collection) {
-      collectionName = options.mongo_collection;    
+      collectionName = options.mongo_collection;
     } else if (model.mongo_collection) {
-      collectionName = model.mongo_collection;     
+      collectionName = model.mongo_collection;
     } else if (model.model && model.model.mongo_collection) {
       collectionName = model.model.mongo_collection;
     } else {

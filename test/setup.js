@@ -31,7 +31,7 @@ exports.setupDb = function (cb) {
   this.Model.prototype.db = store;
   this.Collection.prototype.db = store;
   this.db = store;
-  cb.call(this, null, store); 
+  cb.call(this, null, store);
 };
 
 exports.clearDb = function (done) {

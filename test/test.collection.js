@@ -20,7 +20,7 @@ describe('Collection tests', function () {
         'id_check': 1
       })
       .then(function (m) {
-        model = m;        
+        model = m;
         done();
       });
   });
