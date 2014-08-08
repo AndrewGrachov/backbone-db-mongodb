@@ -2,11 +2,13 @@ var _ = require('lodash'),
   Db = require('backbone-db'),
   debug = require('debug')('backbone-db-mongodb'),
   ObjectId = require('mongodb').BSONPure.ObjectID,
-  util = require('util');
+  util = require('util'),
+  thunky = require('thunky'),
+  mongoDb = require('mongodb').MongoClient;
 
-function MongoDB(client) {
-  if (!client) throw new Error('Db.MongoDB requires a connected mongo client');
-  this.client = client;
+function MongoDB(connectionString) {
+  if (!connectionString) throw new Error('Db.MongoDB requires a connection path');  
+  this.connectionString = connectionString;
 }
 
 function convertSort(sortProp) {
@@ -33,16 +35,35 @@ function convertSort(sortProp) {
 
 MongoDB.sync = Db.sync;
 _.extend(MongoDB.prototype, Db.prototype, {
+  _ensureConnection: function () {
+    var self = this;
+     return thunky(function (callback) {
+      mongoDb.connect(self.connectionString, callback);
+    });
+  },
+
   _getCollection: function(model, options, callback) {
-    if (options && options.mongo_collection) {
-      this.client.collection(options.mongo_collection, callback);
-    } else if (model && model.mongo_collection) {
-      this.client.collection(model.mongo_collection, callback);
-    } else if (model && model.model && model.model.mongo_collection) {
-      this.client.collection(model.model.mongo_collection, callback);
+    model = model || {};
+    options = options || {};
+    var self = this;
+
+    var collectionName;    
+    if (options.mongo_collection) {
+      collectionName = options.mongo_collection;    
+    } else if (model.mongo_collection) {
+      collectionName = model.mongo_collection;     
+    } else if (model.model && model.model.mongo_collection) {
+      collectionName = model.model.mongo_collection;
     } else {
       throw new Error('Cannot get collection for ' + model.type);
     }
+    this._ensureConnection()(function (err, client) {
+      if (err) {
+        return callback(err);
+      }
+      self.client = client;
+      return client.collection(collectionName, callback);
+    });
   },
 
   _filter: function(res, model) {

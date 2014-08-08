@@ -23,27 +23,19 @@ var MyCollection = exports.MyCollection = Collection.extend({
 });
 
 exports.setupDb = function (cb) {
-  if (db) return cb(null, db);
   var mongoPort = process.env.MONGO_PORT || 27017;
   var url = format('mongodb://localhost:%s/backbone-db-tests', mongoPort);
-  MongoClient.connect(url, {}, function (err, database) {
-    if (err) {
-      console.error('Start mongoDB or tune settings in test.model.js', err);
-      cb(err);
-    }
-    db = database;
-    store = new MongoDB(db);
-    this.Collection = MyCollection;
-    this.Model = MyModel;
-    this.Model.prototype.db = store;
-    this.Collection.prototype.db = store;
-    this.db = store;
-    cb.call(this, err, store);
-  });
+  store = new MongoDB(url);
+  this.Collection = MyCollection;
+  this.Model = MyModel;
+  this.Model.prototype.db = store;
+  this.Collection.prototype.db = store;
+  this.db = store;
+  cb.call(this, null, store); 
 };
 
 exports.clearDb = function (done) {
-  db.collection(type).remove(done);
+  store.client.collection(type).remove(done);
 };
 
 var fixtures = [{

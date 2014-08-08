@@ -13,20 +13,24 @@ describe('Collection tests', function () {
     });
   });
 
-  after(function (done) {
-    setup.clearDb(done);
-  });
-
-  it('should .create a model', function () {
+  before(function (done) {
     collection = new this.Collection();
     return collection
       .create({
         'id_check': 1
       })
       .then(function (m) {
-        model = m;
-        assert(m.get('id_check') === collection.at(0).get('id_check'));
+        model = m;        
+        done();
       });
+  });
+
+  after(function (done) {
+    setup.clearDb(done);
+  });
+
+  it('should .create a model', function () {
+      assert(model.get('id_check') === collection.at(0).get('id_check'));
   });
 
   it('should fetch created model', function () {

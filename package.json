@@ -21,7 +21,8 @@
     "backbone-promises": "~0.2",
     "debug": "~0.8",
     "mongodb": "~1.4",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "thunky": "~0.1.0"
   },
   "devDependencies": {
     "mocha": "~1.18",

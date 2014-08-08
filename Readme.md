@@ -4,7 +4,7 @@
 ```js
 var MongoDB = require('backbone-db-mongodb');
 var Model = require('backbone-promises').Model;
-var store = new MongoDB(mongoClient);
+var store = new MongoDB(yourConnectionString);
 
 var MyModel = Model.extend({
   db: store,
